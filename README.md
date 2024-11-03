@@ -47,3 +47,11 @@ Before you begin, ensure you have the following installed:
    ```bash
    git clone https://github.com/luvSainii/healthnfinity
    cd healthnfinity
+2. Navigate to the backend and frontend directories and install the dependencies:
+     Start the backend server:
+       cd backend
+       npm run dev
+
+      Start the frontend server:
+        cd ../frontend
+        npm run dev
