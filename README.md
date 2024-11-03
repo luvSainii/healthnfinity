@@ -55,5 +55,5 @@ Before you begin, ensure you have the following installed:
 
       Start the frontend server:
 
-        cd ../frontend
+        cd frontend
         npm run dev
