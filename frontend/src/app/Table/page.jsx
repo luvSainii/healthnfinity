@@ -1,6 +1,8 @@
-"use client"
-import React, { useState } from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useUser } from './../../context/userContext';
+import axios from 'axios';
 import { 
   Table, 
   TableBody, 
@@ -12,26 +14,54 @@ import {
   Button,
   Pagination
 } from '@mui/material';
-
-// Sample data for the table (expanded for pagination example)
-const allRows = Array.from({ length: 50 }, (_, index) => ({
-  id: index + 1,
-  timestamp: `2023-05-${String(Math.floor(index / 2) + 1).padStart(2, '0')} ${String(Math.floor(Math.random() * 24)).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}:00`,
-  name: ['John Doe', 'Jane Smith', 'Bob Johnson', 'Alice Brown', 'Charlie Davis'][Math.floor(Math.random() * 5)],
-  actionType: ['Login', 'Logout', 'Update Profile', 'Create Post', 'Delete Comment'][Math.floor(Math.random() * 5)]
-}));
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function UserLogTable() {
+
+  const { user } = useUser();
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
+  const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+    // Fetch data from your API endpoint
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/api/logs'); // Update to your endpoint
+        setRows(response.data); 
+      } catch (error) {
+        console.error("Failed to fetch data", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  const paginatedRows = allRows.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  const handleDelete = async (id) => {
+    if (user.role !== "admin") {
+       toast.error("Only admins can delete logs.");
+       return;
+    }
+ 
+    try {
+       await axios.put(`http://localhost:4000/api/logs/delete/${id}`);
+       setRows(rows.filter(row => row._id !== id)); // Correct the filter condition
+       toast.success("Log marked as deleted.");
+    } catch (error) {
+       toast.error("Failed to delete log.");
+    }
+  };
+ 
+
+  const paginatedRows = rows.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   return (
+    <>
+    <Toaster/>
     <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-600 to-blue-900 flex flex-col items-center justify-start p-4">
       <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:20px_20px]" />
       <div className="relative bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl p-8 shadow-2xl w-full max-w-4xl">
@@ -53,19 +83,28 @@ export default function UserLogTable() {
                 <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>ID</TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Timestamp</TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Name</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Action Type</TableCell>
+                {user?.role === "admin" && <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Action Type</TableCell>}
+                {user?.role === "admin" && <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Actions</TableCell>}
               </TableRow>
             </TableHead>
             <TableBody>
               {paginatedRows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell sx={{ color: 'white' }}>{row.id}</TableCell>
+                <TableRow key={row._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell sx={{ color: 'white' }}>{row._id}</TableCell>
                   <TableCell sx={{ color: 'white' }}>{row.timestamp}</TableCell>
-                  <TableCell sx={{ color: 'white' }}>{row.name}</TableCell>
-                  <TableCell sx={{ color: 'white' }}>{row.actionType}</TableCell>
+                  <TableCell sx={{ color: 'white' }}>{row.userId?.name}</TableCell>
+                  {user?.role === "admin" && <TableCell sx={{ color: 'white' }}>{row.actionType}</TableCell>}
+                  {user.role === "admin" && (
+                    <TableCell sx={{ color: 'white' }}>
+                      <Button 
+                        onClick={() => handleDelete(row._id)} // Use row.id for the delete function
+                        variant="contained" 
+                        color="error"
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>
@@ -73,7 +112,7 @@ export default function UserLogTable() {
         </TableContainer>
         <div className="flex justify-center">
           <Pagination 
-            count={Math.ceil(allRows.length / rowsPerPage)} 
+            count={Math.ceil(rows.length / rowsPerPage)} 
             page={page} 
             onChange={handleChangePage} 
             sx={{ 
@@ -88,5 +127,6 @@ export default function UserLogTable() {
         </div>
       </div>
     </div>
+    </>
   );
 }

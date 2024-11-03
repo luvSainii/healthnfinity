@@ -1,30 +1,44 @@
 "use client";
+import { Toaster,toast } from "react-hot-toast";
 import { FiLogOut } from "react-icons/fi";
 import Link from "next/link";
+import axios from "axios";
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const handleLogout = (event) => {
-    event.preventDefault(); // Prevent any default actions
-    console.log("Logging out..."); // Check if this is logged
-    window.location.href = '/Login'; // Redirect to login
+  const router = typeof window !== 'undefined' ? useRouter() : null;
+
+  const handleLogout = async () => {
+    try {
+      // Make a POST request to the logout endpoint
+      await axios.post("http://localhost:4000/auth/logout", {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+
+      // Clear the token from local storage
+      localStorage.removeItem("token");
+
+      // Show a success message
+      toast.success("Logged out successfully!");
+
+      // Redirect to the login page
+      router.push("/Login");
+    } catch (error) {
+      // Handle any errors during logout
+      toast.error("Failed to logout. Try again!");
+    }
   };
 
   return (
     <>
+    <Toaster/>
       <header className="w-full flex items-center justify-between bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg px-6 py-4 shadow-2xl text-white">
         {/* Title */}
         <div className="flex items-center space-x-3">
           <h2 className="text-2xl font-semibold">Healthnfinity</h2>
         </div>
-
-        {/* Logout Button */}
-        <button 
-        onClick={handleLogout} 
-        className="flex items-center space-x-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-lg"
-      >
-        <FiLogOut className="text-lg" />
-        <span>Logout</span>
-      </button>
       </header>
 
       <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-600 to-blue-900 flex items-center justify-center p-4">
@@ -40,6 +54,14 @@ export default function Home() {
           </Link>
         </div>
       </div>
+
+      {/* Logout Button */}
+      <Link href="/Login">
+        <button onClick={handleLogout} className="fixed bottom-8 left-8 flex items-center justify-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-lg shadow-lg transition-colors duration-300">
+          <FiLogOut size={20} />
+          <span>Logout</span>
+        </button>
+      </Link>
     </>
   );
 }
