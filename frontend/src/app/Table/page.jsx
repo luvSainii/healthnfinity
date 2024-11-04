@@ -81,7 +81,7 @@ export default function UserLogTable() {
                   <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>ID</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Timestamp</TableCell>
                   <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Name</TableCell>
-                  {user && user.role === "admin" && <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Action Type</TableCell>}
+                  <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Action Type</TableCell>
                   {user && user.role === "admin" && <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Actions</TableCell>}
                 </TableRow>
               </TableHead>
@@ -90,8 +90,7 @@ export default function UserLogTable() {
                   <TableRow key={row._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell sx={{ color: 'white' }}>{row._id}</TableCell>
                     <TableCell sx={{ color: 'white' }}>{row.timestamp}</TableCell>
-                    <TableCell sx={{ color: 'white' }}>{row.userId?.name}</TableCell>
-                    {user && user.role === "admin" && <TableCell sx={{ color: 'white' }}>{row.actionType}</TableCell>}
+                    <TableCell sx={{ color: 'white' }}>{row.userId?.name}</TableCell><TableCell sx={{ color: 'white' }}>{row.actionType}</TableCell>
                     {user && user.role === "admin" && (
                       <TableCell sx={{ color: 'white' }}>
                         <Button 

@@ -5,9 +5,11 @@ import Link from "next/link";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
 import { useEffect } from "react";
+import { useUser } from '../context/userContext';
 
 export default function Home() {
   const router = useRouter();
+  const { user } = useUser();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -19,7 +21,7 @@ export default function Home() {
   const handleLogout = async () => {
     try {
       // Make a POST request to the logout endpoint
-      await axios.post("http://localhost:4000/auth/logout", {}, {
+      await axios.post("http://localhost:4000/auth/logout", {user}, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         }

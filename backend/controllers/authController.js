@@ -55,7 +55,8 @@ exports.login = async (req, res) => {
 // Logout
 exports.logout = async (req, res) => {
   try {
-    const { user } = req; 
+    const { user } = req.body; 
+    console.log(user)
 
     // Log the logout action
     await new Log({

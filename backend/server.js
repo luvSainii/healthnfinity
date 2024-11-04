@@ -12,6 +12,7 @@ app.use(cors({
     credentials: true // Allow cookies to be sent with requests
   }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use("/auth", authRoutes);
 
 // Your other routes and middleware...
