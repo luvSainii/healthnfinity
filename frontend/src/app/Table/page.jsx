@@ -47,7 +47,7 @@ export default function UserLogTable() {
     }
 
     try {
-       await axios.put(http://localhost:4000/api/logs/delete/${id});
+       await axios.put(`http://localhost:4000/api/logs/delete/${id}`);
        setRows(rows.filter(row => row._id !== id)); // Correct the filter condition
        toast.success("Log marked as deleted.");
     } catch (error) {
