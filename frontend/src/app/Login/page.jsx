@@ -5,19 +5,22 @@ import Link from 'next/link';
 import { Button } from "@mui/material";
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import toast,{Toaster} from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { useUser } from './../../context/userContext'; // Import useUser
 
 export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const router = typeof window !== 'undefined' ? useRouter() : null;
+  const { refreshUser } = useUser(); // Get the refreshUser function
 
   const onSubmit = async (data) => {
     try {
       const response = await axios.post("http://localhost:4000/auth/login", data);
       localStorage.setItem("token", response.data.token);
       toast.success("Login successful!");
-      router.push("/"); // Redirect to the homepage or a protected route
+      refreshUser(); // Refresh the user state after login
+      router.push("/"); // Redirect to the homepage
     } catch (error) {
       toast.error("Login failed. Please check your credentials.");
     }

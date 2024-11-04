@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // Import useRouter
 import { useUser } from './../../context/userContext';
 import axios from 'axios';
 import { 
@@ -18,15 +19,15 @@ import toast, { Toaster } from 'react-hot-toast';
 
 export default function UserLogTable() {
   const { user } = useUser();
+  const router = useRouter(); // Initialize useRouter
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    // Fetch data from your API endpoint
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:4000/api/logs'); // Update to your endpoint
+        const response = await axios.get('http://localhost:4000/api/logs');
         setRows(response.data); 
       } catch (error) {
         console.error("Failed to fetch data", error);
@@ -34,7 +35,8 @@ export default function UserLogTable() {
     };
 
     fetchData();
-  }, []);
+  }, [user]);
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -48,7 +50,7 @@ export default function UserLogTable() {
 
     try {
        await axios.put(`http://localhost:4000/api/logs/delete/${id}`);
-       setRows(rows.filter(row => row._id !== id)); // Correct the filter condition
+       setRows(rows.filter(row => row._id !== id));
        toast.success("Log marked as deleted.");
     } catch (error) {
        toast.error("Failed to delete log.");
@@ -90,11 +92,12 @@ export default function UserLogTable() {
                   <TableRow key={row._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell sx={{ color: 'white' }}>{row._id}</TableCell>
                     <TableCell sx={{ color: 'white' }}>{row.timestamp}</TableCell>
-                    <TableCell sx={{ color: 'white' }}>{row.userId?.name}</TableCell><TableCell sx={{ color: 'white' }}>{row.actionType}</TableCell>
+                    <TableCell sx={{ color: 'white' }}>{row.userId?.name}</TableCell>
+                    <TableCell sx={{ color: 'white' }}>{row.actionType}</TableCell>
                     {user && user.role === "admin" && (
                       <TableCell sx={{ color: 'white' }}>
                         <Button 
-                          onClick={() => handleDelete(row._id)} // Use row._id for the delete function
+                          onClick={() => handleDelete(row._id)} 
                           variant="contained" 
                           color="error"
                         >
