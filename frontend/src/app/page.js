@@ -21,7 +21,7 @@ export default function Home() {
       // Make a POST request to the logout endpoint
       await axios.post("http://localhost:4000/auth/logout", {}, {
         headers: {
-          Authorization: Bearer ${localStorage.getItem("token")}
+          Authorization: `Bearer ${localStorage.getItem("token")}`
         }
       });
 
