@@ -57,3 +57,7 @@ Before you begin, ensure you have the following installed:
 
         cd frontend
         npm run dev
+3. Admin Credentials for Login
+
+         Email :- Admin1234@gmail.com
+         Password :- Admin@1234
