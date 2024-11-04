@@ -1,19 +1,27 @@
 "use client";
-import { Toaster,toast } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 import { FiLogOut } from "react-icons/fi";
 import Link from "next/link";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
+import { useEffect } from "react";
 
 export default function Home() {
-  const router = typeof window !== 'undefined' ? useRouter() : null;
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/Login");
+    }
+  }, [router]);
 
   const handleLogout = async () => {
     try {
       // Make a POST request to the logout endpoint
       await axios.post("http://localhost:4000/auth/logout", {}, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+          Authorization: Bearer ${localStorage.getItem("token")}
         }
       });
 
@@ -33,9 +41,8 @@ export default function Home() {
 
   return (
     <>
-    <Toaster/>
+      <Toaster />
       <header className="w-full flex items-center justify-between bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg px-6 py-4 shadow-2xl text-white">
-        {/* Title */}
         <div className="flex items-center space-x-3">
           <h2 className="text-2xl font-semibold">Healthnfinity</h2>
         </div>
@@ -55,13 +62,10 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Logout Button */}
-      <Link href="/Login">
-        <button onClick={handleLogout} className="fixed bottom-8 left-8 flex items-center justify-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-lg shadow-lg transition-colors duration-300">
-          <FiLogOut size={20} />
-          <span>Logout</span>
-        </button>
-      </Link>
+      <button onClick={handleLogout} className="fixed bottom-8 left-8 flex items-center justify-center space-x-2 text-white bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-lg shadow-lg transition-colors duration-300">
+        <FiLogOut size={20} />
+        <span>Logout</span>
+      </button>
     </>
   );
 }
