@@ -1,14 +1,14 @@
 # Dockerfile for frontend
-FROM node:18
+FROM node:20
 
 # Set working directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy all other files
 COPY . .

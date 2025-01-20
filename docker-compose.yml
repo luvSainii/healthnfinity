@@ -1,20 +1,21 @@
-version: '3.8'
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     ports:
-      - "4000:4000"
+      - "4000:4000" 
+    networks:
+      - test
     environment:
       MONGO_URI: mongodb+srv://beasaini2002:IsTWuriDUj1BaAwQ@healthnfinity.cenia.mongodb.net/?retryWrites=true&w=majority&appName=Healthnfinity
       JWT_SECRET: Bc$2020064
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    build: ./frontend
     ports:
-      - "3000:3000"
-    environment:
-      NEXT_PUBLIC_API_URL: "http://localhost:4000/api"
+      - "3000:3000"  
+    networks:
+      - test 
+
+networks:
+  test:
+    driver: bridge
