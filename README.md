@@ -47,16 +47,10 @@ Before you begin, ensure you have the following installed:
    ```bash
    git clone https://github.com/luvSainii/healthnfinity
    cd healthnfinity
-2. Navigate to the backend and frontend directories and install the dependencies:
-     Start the backend server:
+2. To Run the project:
+     Just write this command in the termianl:
     
-       cd backend
-       npm run dev
-
-      Start the frontend server:
-
-        cd frontend
-        npm run dev
+       docker compose up -d
 3. Admin Credentials for Login
 
          Email :- Admin1234@gmail.com
